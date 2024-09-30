@@ -62,10 +62,6 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
         if (currentProcess->timeUntilFirstResponse - currentProcess->timeRan <= timeToRun && tracker[pid].totalTimeRan == -1 && currentProcess->timeRan > currentProcess->timeUntilFirstResponse)
         {
             tracker[pid].totalTimeRan = CPUTIME - tracker[pid].ArrivalTime + (currentProcess->timeUntilFirstResponse - currentProcess->timeRan);
-            if (pid == 42)
-            {
-                printf("\nCPUTIME=%d, TimetoRun=%d, TuFR=%d, AT=%d \n", CPUTIME, timeToRun, currentProcess->timeUntilFirstResponse, tracker[pid].ArrivalTime);
-            }
         }
 
         tracker[pid].burstLength += timeToRun;
