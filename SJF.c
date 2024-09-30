@@ -18,6 +18,9 @@ void sjf(ProcessData dataArray[], int numProcesses)
     ReadyQueue readyQueue;
     initReadyQueue(&readyQueue);
 
+    int Sequence[MAX_UNIQUE_PIDS + 1];
+    int SequenceIndex = 0;
+
     int processesCompleted = 0;
     int index = 0;
 
@@ -51,6 +54,7 @@ void sjf(ProcessData dataArray[], int numProcesses)
             Tracker[currentProcess->xPid].burstLength = currentProcess->burstLength;
             Tracker[currentProcess->xPid].waitTime = CPUTIME - currentProcess->arrivalTime;
             Tracker[currentProcess->xPid].ArrivalTime = currentProcess->arrivalTime;
+            Sequence[SequenceIndex++] = currentProcess->xPid;
         }
         else
         {
@@ -71,18 +75,43 @@ void sjf(ProcessData dataArray[], int numProcesses)
         CPUTIME += currentProcess->burstLength;
     }
 
-    for (int i = 1; i < 51; i++)
+    printf("\n");
+    printf("Sequence = [");
+    for (int i = 0; i < SequenceIndex; i++)
+    {
+        printf("%d ", Sequence[i]);
+    }
+    printf("]\n");
+    printf("\n");
+    printf("+------+-------------+-------------+------------+-------------+--------------+-------------------+----------------+\n");
+    printf("|  Id  |   Arrival   |    Start    |     End    |    Burst    |     Wait     |     TurnAround    |    Response    |  \n");
+    printf("+------+-------------+-------------+------------+-------------+--------------+-------------------+----------------+\n");
+    int totalWaitTime = 0;
+    int totalTurnaroundTime = 0;
+    int totalResponseTime = 0;
+    for (int i = 1; i <= MAX_UNIQUE_PIDS; i++)
     {
         Tracker[i].responseTime = Tracker[i].processStart + Tracker[i].timeTillFirstResponse - Tracker[i].ArrivalTime;
         Tracker[i].turnAroundTime = Tracker[i].endTime - Tracker[i].ArrivalTime;
-        printf("Id=%d, Arrival= %d, Burst= %d, Wait= %d, Turnaround= %d, Response Time= %d, StartTime= %d, endTime= %d\n",
-               i,
-               Tracker[i].ArrivalTime,
-               Tracker[i].burstLength,
-               Tracker[i].waitTime,
-               Tracker[i].turnAroundTime,
-               Tracker[i].responseTime,
-               Tracker[i].processStart,
-               Tracker[i].endTime);
+        if (Tracker[i].processStart != -1)
+        {
+            printf("|Id=%-2d | Arrival=%-3d | Start=%-5d | End=%-6d | Burst=%-5d | Wait=%-7d | Turnaround=%-6d | Response=%-5d |\n",
+                   i,
+                   Tracker[i].ArrivalTime,
+                   Tracker[i].processStart,
+                   Tracker[i].endTime,
+                   Tracker[i].burstLength,
+                   Tracker[i].waitTime,
+                   Tracker[i].turnAroundTime,
+                   Tracker[i].responseTime);
+
+            totalWaitTime += Tracker[i].waitTime;
+            totalTurnaroundTime += Tracker[i].turnAroundTime;
+            totalResponseTime += Tracker[i].responseTime;
+        }
     }
+    printf("+------+-------------+-------------+------------+-------------+--------------+-------------------+----------------+\n");
+    printf("\nAverage waiting time: %.2f ms\n", (float)totalWaitTime / 50);
+    printf("Average turnaround time: %.2f ms\n", (float)totalTurnaroundTime / 50);
+    printf("Average response time: %.2f ms\n", (float)totalResponseTime / 50);
 }

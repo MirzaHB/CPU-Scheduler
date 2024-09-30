@@ -148,6 +148,7 @@ void SRT(ProcessData dataArray[], int numProcesses, double alpha)
         }
     }
 
+    printf("\n");
     printf("\nPreemptive SRT Scheduling (Alpha = %.2f):\n", alpha);
     printf("Sequence = [");
     for (int i = 0; i < SequenceIndex; i++)
@@ -187,7 +188,7 @@ void SRT(ProcessData dataArray[], int numProcesses, double alpha)
     printf("Average response time: %.2f ms\n", (float)totalResponseTime / 50);
 }
 
-// Helper function to get index of process with shortest estimated remaining time
+// helper function to get index of process with shortest estimated remaining time; should probably be in sheduler_common !!!
 int getShortestEstimatedRemainingTimeIndex(ReadyQueue *queue, double estimatedBurstTime[])
 {
     int minIndex = -1;

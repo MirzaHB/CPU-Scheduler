@@ -10,6 +10,9 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
     ReadyQueue readyQueue;
     initReadyQueue(&readyQueue);
 
+    int Sequence[MAX_UNIQUE_PIDS + 1];
+    int SequenceIndex = 0;
+
     int processesCompleted = 0;
     int index = 0;
 
@@ -35,7 +38,6 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
             if (index < numProcesses)
             {
                 CPUTIME = dataArray[index].arrivalTime;
-                printf("\nBOOOOOM\n");
                 continue;
             }
         }
@@ -48,6 +50,7 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
             tracker[pid].processStart = CPUTIME;
             tracker[pid].ArrivalTime = currentProcess->arrivalTime;
             tracker[pid].burstLength = 0;
+            Sequence[SequenceIndex++] = pid;
         }
 
         int timeRemaining = currentProcess->burstLength - currentProcess->timeRan;
@@ -90,12 +93,26 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
         }
     }
 
+    printf("\n");
     printf("\nRound Robin Scheduling (Quantum = %d):\n", quantum);
+    printf("Sequence = [");
+    for (int i = 0; i < SequenceIndex; i++)
+    {
+        printf("%d ", Sequence[i]);
+    }
+    printf("]\n");
+    printf("\n");
+    printf("+------+-------------+------------+------------+-------------+--------------+-------------------+---------------+\n");
+    printf("|  Id  |   Arrival   |    Start   |     End    |    Burst    |     Wait     |     TurnAround    |    Response   |  \n");
+    printf("+------+-------------+------------+------------+-------------+--------------+-------------------+---------------+\n");
+    int totalWaitTime = 0;
+    int totalTurnaroundTime = 0;
+    int totalResponseTime = 0;
     for (int i = 1; i <= MAX_UNIQUE_PIDS; i++)
     {
         if (tracker[i].processStart != -1)
         {
-            printf("Id=%d, Arrival=%d, Start=%d, End=%d, Burst=%d, Wait=%d, Turnaround=%d, Response=%d\n",
+            printf("|Id=%-2d | Arrival=%-3d | Start=%-4d | End=%-6d | Burst=%-5d | Wait=%-7d | Turnaround=%-6d | Response=%-4d |\n",
                    i,
                    tracker[i].ArrivalTime,
                    tracker[i].processStart,
@@ -104,6 +121,14 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
                    tracker[i].waitTime,
                    tracker[i].turnAroundTime,
                    tracker[i].totalTimeRan);
+
+            totalWaitTime += tracker[i].waitTime;
+            totalTurnaroundTime += tracker[i].turnAroundTime;
+            totalResponseTime += tracker[i].responseTime;
         }
     }
+    printf("+------+-------------+------------+------------+-------------+--------------+-------------------+---------------+\n");
+    printf("\nAverage waiting time: %.2f ms\n", (float)totalWaitTime / 50);
+    printf("Average turnaround time: %.2f ms\n", (float)totalTurnaroundTime / 50);
+    printf("Average response time: %.2f ms\n", (float)totalResponseTime / 50);
 }
