@@ -37,7 +37,7 @@ void fcfs(ProcessData dataArray[], int numProcesses)
         {
             if (index < numProcesses)
             {
-                // If no process is in the ready queue, advance CPU time to the next arrival
+                // if no process is in the ready queue move to time of next process arrival
                 CPUTIME = dataArray[index].arrivalTime;
                 continue;
             }
@@ -59,7 +59,6 @@ void fcfs(ProcessData dataArray[], int numProcesses)
         processesCompleted++;
     }
 
-    // Calculate and display process metrics
     for (int i = 1; i < 51; i++)
     {
         if (Tracker[i].processStart != -1)
