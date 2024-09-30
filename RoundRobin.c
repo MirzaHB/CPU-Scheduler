@@ -1,22 +1,12 @@
 #include "scheduler_common.h"
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
 {
     ProcessTrackerRR tracker[MAX_UNIQUE_PIDS + 1];
-    for (int i = 0; i <= MAX_UNIQUE_PIDS; i++)
-    {
-        tracker[i].processStart = -1;
-        tracker[i].ArrivalTime = 0;
-        tracker[i].timeTillFirstResponse = 0;
-        tracker[i].endTime = 0;
-        tracker[i].waitTime = 0;
-        tracker[i].responseTime = -1;
-        tracker[i].burstLength = 0;
-        tracker[i].turnAroundTime = 0;
-    }
-
+    memset(tracker, -1, sizeof(tracker));
     ReadyQueue readyQueue;
     initReadyQueue(&readyQueue);
 
@@ -45,6 +35,7 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
             if (index < numProcesses)
             {
                 CPUTIME = dataArray[index].arrivalTime;
+                printf("\nBOOOOOM\n");
                 continue;
             }
         }
@@ -56,6 +47,7 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
         {
             tracker[pid].processStart = CPUTIME;
             tracker[pid].ArrivalTime = currentProcess->arrivalTime;
+            tracker[pid].burstLength = 0;
         }
 
         int timeRemaining = currentProcess->burstLength - currentProcess->timeRan;
@@ -63,6 +55,16 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
 
         CPUTIME += timeToRun;
         currentProcess->timeRan += timeToRun;
+
+        if (currentProcess->timeUntilFirstResponse - currentProcess->timeRan <= timeToRun && tracker[pid].totalTimeRan == -1 && currentProcess->timeRan > currentProcess->timeUntilFirstResponse)
+        {
+            tracker[pid].totalTimeRan = CPUTIME - tracker[pid].ArrivalTime + (currentProcess->timeUntilFirstResponse - currentProcess->timeRan);
+            if (pid == 42)
+            {
+                printf("\nCPUTIME=%d, TimetoRun=%d, TuFR=%d, AT=%d \n", CPUTIME, timeToRun, currentProcess->timeUntilFirstResponse, tracker[pid].ArrivalTime);
+            }
+        }
+
         tracker[pid].burstLength += timeToRun;
         tracker[pid].endTime = CPUTIME;
 
@@ -70,11 +72,6 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
         {
             addToReadyQueue(&readyQueue, &dataArray[index]);
             index++;
-        }
-
-        if (tracker[pid].responseTime == -1 && currentProcess->timeUntilFirstResponse - currentProcess->timeRan <= quantum)
-        {
-            tracker[pid].responseTime = CPUTIME + currentProcess->timeUntilFirstResponse;
         }
 
         if (currentProcess->timeRan == currentProcess->burstLength)
@@ -106,7 +103,7 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
                    tracker[i].burstLength,
                    tracker[i].waitTime,
                    tracker[i].turnAroundTime,
-                   tracker[i].responseTime);
+                   tracker[i].totalTimeRan);
         }
     }
 }

@@ -1,8 +1,8 @@
-#include "Priority.h"
+#include "Fcfs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void priorityScheduling(ProcessData dataArray[], int numProcesses)
+void fcfs(ProcessData dataArray[], int numProcesses)
 {
     ProcessTracker Tracker[51];
     for (int i = 0; i < 51; i++)
@@ -15,6 +15,7 @@ void priorityScheduling(ProcessData dataArray[], int numProcesses)
         Tracker[i].burstLength = 0;
     }
 
+    qsort(dataArray, numProcesses, sizeof(ProcessData), compareProcesses);
     ReadyQueue readyQueue;
     initReadyQueue(&readyQueue);
 
@@ -25,7 +26,7 @@ void priorityScheduling(ProcessData dataArray[], int numProcesses)
 
     while (processesCompleted < numProcesses)
     {
-        // add all processes that have arrived to the ready queue
+
         while (index < numProcesses && dataArray[index].arrivalTime <= CPUTIME)
         {
             addToReadyQueue(&readyQueue, &dataArray[index]);
@@ -34,52 +35,38 @@ void priorityScheduling(ProcessData dataArray[], int numProcesses)
 
         if (readyQueue.size == 0)
         {
-            // no processes are ready? advance CPUTIME to arrival time of the next process
             if (index < numProcesses)
             {
+                // If no process is in the ready queue, advance CPU time to the next arrival
                 CPUTIME = dataArray[index].arrivalTime;
                 continue;
             }
         }
 
-        ProcessData *currentProcess = getHighestPriorityJob(&readyQueue);
+        ProcessData *currentProcess = removeFromReadyQueue(&readyQueue, 0);
 
-        int ProcessEnd = CPUTIME + currentProcess->burstLength;
         if (Tracker[currentProcess->xPid].processStart == -1)
         {
             Tracker[currentProcess->xPid].processStart = CPUTIME;
-            Tracker[currentProcess->xPid].timeTillFirstResponse = currentProcess->timeUntilFirstResponse;
-            Tracker[currentProcess->xPid].burstLength = currentProcess->burstLength;
-            Tracker[currentProcess->xPid].waitTime = CPUTIME - currentProcess->arrivalTime;
             Tracker[currentProcess->xPid].ArrivalTime = currentProcess->arrivalTime;
-            Tracker[currentProcess->xPid].endTime = ProcessEnd;
-        }
-        else
-        {
-            Tracker[currentProcess->xPid].burstLength += currentProcess->burstLength;
-            Tracker[currentProcess->xPid].waitTime += CPUTIME - currentProcess->arrivalTime;
-
-            if (Tracker[currentProcess->xPid].endTime < ProcessEnd)
-            {
-                Tracker[currentProcess->xPid].endTime = ProcessEnd;
-            }
-            if (Tracker[currentProcess->xPid].ArrivalTime > currentProcess->arrivalTime)
-            {
-                Tracker[currentProcess->xPid].ArrivalTime = currentProcess->arrivalTime;
-            }
+            Tracker[currentProcess->xPid].timeTillFirstResponse = currentProcess->timeUntilFirstResponse;
         }
 
-        processesCompleted++;
+        Tracker[currentProcess->xPid].waitTime += CPUTIME - currentProcess->arrivalTime;
+        Tracker[currentProcess->xPid].burstLength += currentProcess->burstLength;
         CPUTIME += currentProcess->burstLength;
+        Tracker[currentProcess->xPid].endTime = CPUTIME;
+        processesCompleted++;
     }
 
+    // Calculate and display process metrics
     for (int i = 1; i < 51; i++)
     {
         if (Tracker[i].processStart != -1)
         {
             Tracker[i].responseTime = Tracker[i].processStart + Tracker[i].timeTillFirstResponse - Tracker[i].ArrivalTime;
             Tracker[i].turnAroundTime = Tracker[i].endTime - Tracker[i].ArrivalTime;
-            printf("Id=%d, Arrival= %d, Burst= %d, Wait= %d, Turnaround= %d, Response Time= %d, StartTime= %d, endTime= %d\n",
+            printf("Id=%d, Arrival=%d, Burst=%d, Wait=%d, Turnaround=%d, Response Time=%d, StartTime=%d, EndTime=%d\n",
                    i,
                    Tracker[i].ArrivalTime,
                    Tracker[i].burstLength,

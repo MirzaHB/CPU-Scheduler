@@ -22,6 +22,6 @@ typedef struct
     int timeRan;
 } ProcessData;
 
-int csv_reader(const char *filename, ProcessData dataArray[], int maxRows);
+int csv_reader(FILE *input, ProcessData dataArray[], int maxRows);
 
 #endif

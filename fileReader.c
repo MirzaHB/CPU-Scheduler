@@ -1,33 +1,21 @@
-
-
 #include <stdlib.h>
 #include <string.h>
-
 #include "fileReader.h"
 
-int csv_reader(const char *filename, ProcessData dataArray[], int maxRows)
+int csv_reader(FILE *input, ProcessData dataArray[], int maxRows)
 {
-
-    FILE *file = fopen(filename, "r");
-    if (file == NULL)
-    {
-        perror("Error opening file");
-        return -1;
-    }
-
     char line[256];
     int rowCount = 0;
 
     // read header
-    if (fgets(line, sizeof(line), file) == NULL)
+    if (fgets(line, sizeof(line), input) == NULL)
     {
         fprintf(stderr, "Error reading header line\n");
-        fclose(file);
         return -1;
     }
 
     // read each line 1 by 1 and assign the correct values to the struct fields for each process
-    while (fgets(line, sizeof(line), file))
+    while (fgets(line, sizeof(line), input))
     {
         if (rowCount >= maxRows)
         {
@@ -75,6 +63,5 @@ int csv_reader(const char *filename, ProcessData dataArray[], int maxRows)
         rowCount++;
     }
 
-    fclose(file);
-    return rowCount; // return the number of rows read
+    return rowCount; // returns the number of rows read
 }

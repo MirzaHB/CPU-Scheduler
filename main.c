@@ -1,63 +1,62 @@
-
 #include <stdio.h>
 #include <string.h>
 #include "fileReader.h"
-#include "scheduler.h"
+#include "Fcfs.h"
 #include "Priority.h"
 #include "RoundRobin.h"
+#include "SJF.h"
 #include <stdlib.h>
 
-int main()
+int main(int argc, char *argv[])
 {
-    ProcessData dataArray[MAX_ROWS];
-    memset(dataArray, 0, sizeof(dataArray));
-    ProcessData result[MAX_ROWS];
-    int numRows = csv_reader("Assignment 1 input file.csv", dataArray, MAX_ROWS);
-
-    if (numRows < 0)
+    if (argc < 2)
     {
-        fprintf(stderr, "Failed to read CSV data\n");
+        fprintf(stderr, "Usage: %s [FCFS|SJF|Priority|RR] [quantum]\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    int count = 0;
+    ProcessData dataArray[MAX_ROWS];
+    memset(dataArray, 0, sizeof(dataArray));
 
-    // --------FOR FCFS--------
-    // qsort(dataArray, numRows, sizeof(ProcessData), compareProcesses);
-    // fcfs(dataArray, numRows);
-    // qsort(dataArray, numRows, sizeof(ProcessData), compareByxPid);
-    // processCombiner(dataArray, numRows, result, &count);
+    // read process data from input file
+    int numRows = csv_reader(stdin, dataArray, MAX_ROWS);
+    if (numRows < 0)
+    {
+        fprintf(stderr, "Failed to read process data\n");
+        return EXIT_FAILURE;
+    }
 
-    // ---------FOR SJF-------
-    // gcc -o scheduler main.c fileReader.c scheduler_common.c SJF.c -I.
-    // qsort(dataArray, numRows, sizeof(ProcessData), compareProcesses);
-    // sjf(dataArray, numRows);
+    char *algorithm = argv[1];
 
-    // Bottom two not needed for SJF
-    //  qsort(dataArray, numRows, sizeof(ProcessData), compareByxPid);
-
-    // ---------For Priority------
-    // gcc -o scheduler main.c fileReader.c scheduler_common.c Priority.c -I.
-    // qsort(dataArray, numRows, sizeof(ProcessData), compareProcesses); DONT THINK THIS IS NEEDED
-    // priorityScheduling(dataArray, numRows);
-
-    // ----------ROUND ROBIN--------
-    RoundRobin(dataArray, numRows, 100);
-
-    // processCombiner(dataArray, numRows, result, &count);
-
-    // for (int i = 0; i < count; i++)
-    // {
-    //     printf("Id=%d, Arrival= %d, Burst= %d, Wait= %d, Turnaround= %d, Response Time= %d, StartTime= %d, endTime= %d\n",
-    //            result[i].xPid,
-    //            result[i].arrivalTime,
-    //            result[i].burstLength,
-    //            result[i].waitTime,
-    //            result[i].turnAroundTime,
-    //            result[i].responseTime,
-    //            result[i].processStartTime,
-    //            result[i].completionTime);
-    // }
+    if (strcmp(algorithm, "FCFS") == 0)
+    {
+        qsort(dataArray, numRows, sizeof(ProcessData), compareProcesses);
+        fcfs(dataArray, numRows);
+    }
+    else if (strcmp(algorithm, "SJF") == 0)
+    {
+        qsort(dataArray, numRows, sizeof(ProcessData), compareProcesses);
+        sjf(dataArray, numRows);
+    }
+    else if (strcmp(algorithm, "Priority") == 0)
+    {
+        priorityScheduling(dataArray, numRows);
+    }
+    else if (strcmp(algorithm, "RR") == 0)
+    {
+        if (argc < 3)
+        {
+            fprintf(stderr, "Usage: %s RR [quantum]\n", argv[0]);
+            return EXIT_FAILURE;
+        }
+        int quantum = atoi(argv[2]);
+        RoundRobin(dataArray, numRows, quantum);
+    }
+    else
+    {
+        fprintf(stderr, "Unknown scheduling algorithm: %s\n", algorithm);
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

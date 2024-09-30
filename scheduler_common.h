@@ -34,8 +34,7 @@ typedef struct
     int burstLength;
     int turnAroundTime;
     int timeTillFirstResponse;
-    int timeRanSinceProcessStart;
-
+    int totalTimeRan;
 } ProcessTrackerRR;
 
 // Queue operations

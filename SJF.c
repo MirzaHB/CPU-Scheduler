@@ -1,4 +1,4 @@
-#include "scheduler_common.h"
+#include "SJF.h"
 #include <stdio.h>
 #include <stdlib.h>
 
