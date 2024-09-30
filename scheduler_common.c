@@ -131,3 +131,54 @@ ProcessData *getHighestPriorityJob(ReadyQueue *queue)
 
     return highestPriorityProcess;
 }
+
+int getShortestRemainingTimeIndex(ReadyQueue *queue)
+{
+    if (queue->size == 0)
+    {
+        return -1;
+    }
+
+    int shortestIndex = 0;
+    int shortestTime = queue->processes[0]->remainingTime;
+
+    for (int i = 1; i < queue->size; i++)
+    {
+        if (queue->processes[i]->remainingTime < shortestTime)
+        {
+            shortestTime = queue->processes[i]->remainingTime;
+            shortestIndex = i;
+        }
+        else if (queue->processes[i]->remainingTime == shortestTime)
+        {
+            if (queue->processes[i]->xPid < queue->processes[shortestIndex]->xPid)
+            {
+                shortestIndex = i;
+            }
+        }
+    }
+
+    return shortestIndex;
+}
+void sortReadyQueueByRemainingTime(ReadyQueue *queue)
+{
+    // Simple selection sort for illustration; replace with qsort if preferred
+    for (int i = 0; i < queue->size - 1; i++)
+    {
+        int minIndex = i;
+        for (int j = i + 1; j < queue->size; j++)
+        {
+            if (queue->processes[j]->remainingTime < queue->processes[minIndex]->remainingTime)
+            {
+                minIndex = j;
+            }
+        }
+        // Swap
+        if (minIndex != i)
+        {
+            ProcessData *temp = queue->processes[i];
+            queue->processes[i] = queue->processes[minIndex];
+            queue->processes[minIndex] = temp;
+        }
+    }
+}

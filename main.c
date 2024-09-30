@@ -5,6 +5,7 @@
 #include "Priority.h"
 #include "RoundRobin.h"
 #include "SJF.h"
+#include "SRT.h"
 #include <stdlib.h>
 
 int main(int argc, char *argv[])
@@ -51,6 +52,16 @@ int main(int argc, char *argv[])
         }
         int quantum = atoi(argv[2]);
         RoundRobin(dataArray, numRows, quantum);
+    }
+    else if (strcmp(algorithm, "SRT") == 0)
+    {
+        if (argc < 3)
+        {
+            fprintf(stderr, "Usage: %s SRT [alpha]\n", argv[0]);
+            return EXIT_FAILURE;
+        }
+        float alpha = atof(argv[2]);
+        SRT(dataArray, numRows, alpha);
     }
     else
     {

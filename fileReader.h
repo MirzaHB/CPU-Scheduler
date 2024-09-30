@@ -14,11 +14,11 @@ typedef struct
     int timeUntilFirstResponse;
     int burstLength;
     int waitTime;
-    int turnAroundTime;
-    int responseTime;
     int processStartTime;
-    int completionTime;
-    int count;
+    int remainingTime;
+    int firstSet;
+    float exponentialAverage;
+    int actualBurstLength;
     int timeRan;
 } ProcessData;
 

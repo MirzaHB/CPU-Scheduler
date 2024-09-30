@@ -47,6 +47,8 @@ int compareByArrivalTime(const void *a, const void *b);
 int compareProcesses(const void *a, const void *b);
 ProcessData *getHighestPriorityJob(ReadyQueue *queue);
 ProcessData *getShortestJob(ReadyQueue *queue);
+int getShortestRemainingTimeIndex(ReadyQueue *queue);
+void sortReadyQueueByRemainingTime(ReadyQueue *queue);
 
 extern int CPUTIME;
 
