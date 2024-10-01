@@ -1,3 +1,4 @@
+// Author: Mirza Hassan Baig
 #include <stdio.h>
 #include <string.h>
 #include "fileReader.h"

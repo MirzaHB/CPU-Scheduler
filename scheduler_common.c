@@ -1,4 +1,4 @@
-// scheduler_common.c
+// Author: Mirza Hassan Baig
 #include "scheduler_common.h"
 #include <stdio.h>
 

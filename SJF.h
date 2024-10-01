@@ -1,3 +1,4 @@
+// Author: Mirza Hassan Baig
 #ifndef SJF_H
 #define SJF_H
 

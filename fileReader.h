@@ -1,5 +1,4 @@
-
-
+// Author: Mirza Hassan Baig
 #ifndef FILEREADER_H
 #define FILEREADER_H
 

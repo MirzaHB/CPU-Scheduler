@@ -1,3 +1,4 @@
+// Author: Mirza Hassan Baig
 #include "SRT.h"
 #include <string.h>
 #include <stdio.h>

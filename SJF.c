@@ -1,3 +1,4 @@
+// Author: Mirza Hassan Baig
 #include "SJF.h"
 #include <stdio.h>
 #include <stdlib.h>
