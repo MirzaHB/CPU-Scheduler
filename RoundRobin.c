@@ -18,11 +18,6 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
 
     CPUTIME = 0;
 
-    for (int i = 0; i < numProcesses; i++)
-    {
-        dataArray[i].timeRan = 0;
-    }
-
     // qsort(dataArray, numProcesses, sizeof(ProcessData), compareByArrivalTime); Not sure if this is needed
 
     while (processesCompleted < numProcesses)
