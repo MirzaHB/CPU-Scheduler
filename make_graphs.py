@@ -23,18 +23,16 @@ import subprocess
 rr_avgs = []
 for i in range(1, 101):
     res = subprocess.run(
-        ["./a.exe", "RR", +str(i)],  # command to run, this might be ./scheduler RR 5
+        ["./scheduler", "RR", str(i)],  # Corrected command
         stdin=open("Assignment 1 input file.csv"),
         capture_output=True,
     )
-    # print(res.stdout.decode()) -> this is your output, in bytes format so you need to decode it
-    averages = res.stdout.decode().split("\n")[
-        -4:-1
-    ]  # get the last three lines in a list
-    for i in range(3):
-        averages[i] = float(
-            averages[i].split()[-2]
-        )  # get the second last word and convert it to a float
+    # print(res.stdout.decode())  # This is your output
+    averages = res.stdout.decode().split("\n")[-4:-1]  # Get the last three lines
+    for j in range(3):  # Use a different variable to avoid overwriting 'i'
+        averages[j] = float(
+            averages[j].split()[-2]
+        )  # Get the second last word and convert it to a float
     # print(averages)
     rr_avgs.append(averages)
 

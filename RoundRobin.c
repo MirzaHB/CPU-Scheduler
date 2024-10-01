@@ -116,7 +116,7 @@ void RoundRobin(ProcessData dataArray[], int numProcesses, int quantum)
 
             totalWaitTime += tracker[i].waitTime;
             totalTurnaroundTime += tracker[i].turnAroundTime;
-            totalResponseTime += tracker[i].responseTime;
+            totalResponseTime += tracker[i].totalTimeRan;
         }
     }
     printf("+------+-------------+------------+------------+-------------+--------------+-------------------+---------------+\n");
