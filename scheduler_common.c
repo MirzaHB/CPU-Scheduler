@@ -162,7 +162,6 @@ int getShortestRemainingTimeIndex(ReadyQueue *queue)
 }
 void sortReadyQueueByRemainingTime(ReadyQueue *queue)
 {
-    // Simple selection sort for illustration; replace with qsort if preferred
     for (int i = 0; i < queue->size - 1; i++)
     {
         int minIndex = i;
@@ -173,7 +172,6 @@ void sortReadyQueueByRemainingTime(ReadyQueue *queue)
                 minIndex = j;
             }
         }
-        // Swap
         if (minIndex != i)
         {
             ProcessData *temp = queue->processes[i];
